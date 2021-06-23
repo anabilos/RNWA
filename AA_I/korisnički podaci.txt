@@ -1,0 +1,7 @@
+REST II:
+User: admin
+Pass: rest2
+
+REST III:
+User: admin
+Pass: rest3

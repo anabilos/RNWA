@@ -1,0 +1,129 @@
+##NOWSDL REQUEST
+<?php 
+$conn = mysqli_connect("localhost", "root", "", "fido") or die("Connection failed: " . mysqli_connect_error());
+if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+}
+
+if(isset($_GET['building_UID'])) {	
+	$building_UID = $_GET['building_UID']; 
+	$sql_query = "select building_UID, location_UID, level, description, lastMod 
+	from building b
+	inner join location l on b.building_UID=l.fk_building_UID
+	where building_UID = $building_UID";
+	
+	$response = mysqli_query($conn, $sql_query) or die("database error:". mysqli_error($conn));	
+	$rows = array();
+	if(mysqli_num_rows($response)!=0){
+	while($r = mysqli_fetch_assoc($response)) {
+    $rows[] = $r;
+	}
+	print json_encode($rows);
+	}else{
+		echo "Nema podataka za prikaz!";
+	}	
+}
+?>		
+
+##NOWSDL RESPONSE
+[{"building_UID":"0330","location_UID":"0543","level":"0","description":"This is Test Location 0330-1.","lastMod":"2017-08-09 22:59:47"},
+{"building_UID":"0330","location_UID":"0544","level":"1","description":"This is Test Location 0330-2.","lastMod":"2017-08-09 22:59:47"},
+{"building_UID":"0330","location_UID":"0545","level":"2","description":"This is Test Location 0330-3.","lastMod":"2017-08-09 22:59:47"}] 
+
+##WSDL REQUEST
+[System.Web.Services.WebMethod]
+        public DataTable getBuilding(int id)
+        {
+            string connString = "SERVER=localhost" + ";" +
+                "DATABASE=fido;" +
+                "UID=root;" +
+                "PASSWORD=;";
+
+            MySqlConnection cnMySQL = new MySqlConnection(connString);
+
+            MySqlCommand cmdMySQL = cnMySQL.CreateCommand();
+
+            MySqlDataReader reader;
+
+            cmdMySQL.CommandText = "select * from building where number='" + id +  "'";
+
+            cnMySQL.Open();
+
+            reader = cmdMySQL.ExecuteReader();
+
+            DataTable dt = new DataTable();
+            dt.Load(reader);
+            
+
+            cnMySQL.Close();
+
+            return dt;
+        }
+    
+##WSDL RESPONSE
+<DataTable xmlns="http://tempuri.org/">
+<xs:schema xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="NewDataSet">
+<xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:MainDataTable="building" msdata:UseCurrentLocale="true">
+<xs:complexType>
+<xs:choice minOccurs="0" maxOccurs="unbounded">
+<xs:element name="building">
+<xs:complexType>
+<xs:sequence>
+<xs:element name="building_UID" msdata:AutoIncrement="true" type="xs:int"/>
+<xs:element name="number">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:maxLength value="4"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="name">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:maxLength value="60"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="levels" type="xs:int"/>
+<xs:element name="notes" minOccurs="0">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:maxLength value="256"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="address" minOccurs="0">
+<xs:simpleType>
+<xs:restriction base="xs:string">
+<xs:maxLength value="256"/>
+</xs:restriction>
+</xs:simpleType>
+</xs:element>
+<xs:element name="long" type="xs:decimal" minOccurs="0"/>
+<xs:element name="lat" type="xs:decimal" minOccurs="0"/>
+<xs:element name="lastmodified" type="xs:dateTime"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:choice>
+</xs:complexType>
+<xs:unique name="Constraint1" msdata:PrimaryKey="true">
+<xs:selector xpath=".//building"/>
+<xs:field xpath="building_UID"/>
+</xs:unique>
+</xs:element>
+</xs:schema>
+<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">
+<DocumentElement xmlns="">
+<building diffgr:id="building1" msdata:rowOrder="0">
+<building_UID>329</building_UID>
+<number>999</number>
+<name>Test Building</name>
+<levels>3</levels>
+<notes>This is the "hub" test building.</notes>
+<lastmodified>2017-08-09T22:37:05+02:00</lastmodified>
+</building>
+</DocumentElement>
+</diffgr:diffgram>
+</DataTable>
