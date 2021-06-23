@@ -1,17 +1,11 @@
-<html>
-<head>
 
-
-</head>
-<body>
 
 <?php
-
-
 
 // get the q parameter from URL
 $s = $_REQUEST["s"];
 $hint = "";
+
 
 // lookup all hints from array if $q is different from "" 
 
@@ -91,8 +85,7 @@ echo "<br>Nije proslo spajanje<br>";
 //echo $hint === "" ? "no suggestion" : $hint;
 
 ?>
-</body>
-</html>
+
 
 
 
